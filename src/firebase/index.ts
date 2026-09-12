@@ -20,11 +20,7 @@ export function initializeFirebase(): {
   const apps = typeof getAppsFn === 'function' ? getAppsFn() : [];
   let app: FirebaseApp;
   if (!apps.length) {
-    try {
-      app = initializeAppFn();
-    } catch {
-      app = initializeAppFn(firebaseConfig);
-    }
+    app = initializeAppFn(firebaseConfig);
   } else {
     app = getAppFn();
   }
