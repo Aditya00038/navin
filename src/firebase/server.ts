@@ -44,26 +44,19 @@ function getOrInitAdminApp(): App {
     !!serviceAccount.privateKey &&
     !hasPlaceholderCredentials;
 
-  if (!hasExplicitCredentials && process.env.NODE_ENV !== 'production') {
+  if (!hasExplicitCredentials) {
     throw new Error(
-      'Firebase Admin credentials are missing for server routes. Set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, and FIREBASE_PRIVATE_KEY (or FIREBASE_SERVICE_ACCOUNT_KEY JSON).'
+      'Firebase Admin credentials are missing. Set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, and FIREBASE_PRIVATE_KEY (or FIREBASE_SERVICE_ACCOUNT_KEY) in deployment environment variables.'
     );
   }
 
-  return initializeApp(
-    hasExplicitCredentials
-      ? {
-          credential: cert({
-            projectId: serviceAccount.projectId,
-            clientEmail: serviceAccount.clientEmail,
-            privateKey: serviceAccount.privateKey,
-          }),
-        }
-      : {
-          projectId: runtimeProjectId,
-          // Fall back to the hosting/runtime identity when explicit credentials are not set.
-        }
-  );
+  return initializeApp({
+    credential: cert({
+      projectId: serviceAccount.projectId,
+      clientEmail: serviceAccount.clientEmail,
+      privateKey: serviceAccount.privateKey,
+    }),
+  });
 }
 
 export async function getFirebaseAdmin() {

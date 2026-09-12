@@ -38,7 +38,14 @@ export default function WorkerLoginPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ workerId: workerId.trim().toUpperCase() }),
       });
-      const data = await res.json();
+      let data: any = null;
+      try {
+        data = await res.json();
+      } catch {
+        throw new Error(
+          `Server error (${res.status}). Ensure environment variables are configured on your deployment platform.`
+        );
+      }
       if (!res.ok || !data?.email) throw new Error(data?.error ?? 'Employee ID not found.');
 
       // Step 2 — sign in with email + password
